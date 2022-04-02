@@ -29,16 +29,13 @@ class _FloatingWidgetState extends State<FloatingWidget> with SingleTickerProvid
   double appBarHeight = AppBar().preferredSize.height;
   bool isDragging = false;
 
-  @override
-  void initState() {
-    top = widget.dy?? MediaQuery.of(context).size.height / 2;
-    left = widget.dx?? MediaQuery.of(context).size.width / 2;
-    super.initState();
-  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    top = widget.dy?? MediaQuery.of(context).size.height / 2;
+    left = widget.dx?? MediaQuery.of(context).size.width / 2;
     return Scaffold(
       body: GestureDetector(
         onTap: (){
