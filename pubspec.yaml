@@ -1,11 +1,11 @@
 name: floating_animated_widget
 description: A flutter package for floating animated widget.
-version: 0.0.1
+version: 1.0.1
 homepage: https://github.com/Smueez/floating_animated_widget
 
 environment:
-  sdk: ">=2.17.0-182.1.beta <3.0.0"
-  flutter: ">=1.17.0"
+  sdk: ">=2.16.2 <3.0.0"
+  flutter: ">=2.10.4"
 
 dependencies:
   flutter:
