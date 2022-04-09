@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 class FloatingDraggableWidget extends StatefulWidget {
   FloatingDraggableWidget({required this.child,
     required this.floatingWidget,
-    this.dy,
-    this.dx,
     required this.floatingWidgetWidth,
     required this.floatingWidgetHeight,
+    required this.dy,
+    required this.dx,
     this.speed,
+    this.isDraggable = false,
     Key? key}) : super(key: key);
 
   /// Child is required and it accept any widget.
@@ -29,10 +30,10 @@ class FloatingDraggableWidget extends StatefulWidget {
   double floatingWidgetWidth;
   double floatingWidgetHeight;
   Widget floatingWidget;
-  double? dy;
-  double? dx;
+  double dy;
+  double dx;
   double? speed;
-
+  bool isDraggable;
   @override
   _FloatingDraggableWidgetState createState() => _FloatingDraggableWidgetState();
 }
@@ -46,7 +47,13 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
   double appBarHeight = AppBar().preferredSize.height;
   /// bool value if it is dragging
   bool isDragging = false;
-
+  bool _isDraggable = false;
+  @override
+  void initState() {
+    top = widget.dy;
+    left = widget.dx;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +61,8 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     /// distance from top and left from user
-    top = widget.dy?? MediaQuery.of(context).size.height / 2;
-    left = widget.dx?? MediaQuery.of(context).size.width / 2;
+    /// top = widget.dy?? MediaQuery.of(context).size.height / 2;
+    /// left = widget.dx?? MediaQuery.of(context).size.width / 2;
     return Scaffold(
       body: GestureDetector(
         /// if the user touched out side of the widget the tabbed will be false
@@ -79,7 +86,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
         /// setting the top and left globally
         onPanUpdate: (value){
           setState(() {
-            if(isTabbed){
+            if(isTabbed && _isDraggable){
               top = value.localPosition.dy;
               left = value.localPosition.dx;
             }
@@ -124,7 +131,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
                     /// updating top and left variable
                     onPanUpdate: (value){
                       setState(() {
-                        if(isTabbed){
+                        if(isTabbed && _isDraggable){
                           top = _getDy(value.globalPosition.dy, height);
                           left = _getDx(value.globalPosition.dx, width);
                         }
@@ -133,7 +140,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
                     /// give a sliding animation
                     onPanEnd: (value){
                       setState(() {
-                        if(isTabbed){
+                        if(isTabbed && _isDraggable){
                           isDragging = false;
                           left = _getDx(left + value.velocity.pixelsPerSecond.dx/(widget.speed??50.0).toDouble(), width);
                           top = _getDy(top + value.velocity.pixelsPerSecond.dy/(widget.speed??50.0).toDouble(), height);
@@ -153,6 +160,12 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
         ),
       ),
     );
+  }
+
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    _isDraggable = widget.isDraggable;
   }
 
   /// get the y axis value or top value with screen size

@@ -1,8 +1,8 @@
-#### Usage　
+#### Example　
 
 ```Dart
 import 'package:flutter/material.dart';
-import 'package:floating_animated_widget/floating_animated_widget.dart';
+import 'package:floating_animated_widget/floating_draggable_widget.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    return FloatingWidget(
+    return FloatingDraggableWidget(
       child: Scaffold(
         appBar: AppBar(
 
@@ -76,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingWidgetHeight: 40,
       floatingWidgetWidth: 40,
+      dx: 200,
+      dy: 300
     );
   }
 }

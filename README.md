@@ -3,13 +3,13 @@
 - Support Android, IOS, Web etc.
 - This package is used to make a widget movable or draggable around the screen freely;
 - Works fine for any Widget;
-- Does not affect the functionnality or permormance of the particilar widget;
+- Does not affect the functionality or performance of the particular widget;
 - Used physics law supported animation to make it more attractive;
 
 
 ## Demo
 
-![](https://raw.githubusercontent.com/Smueez/assets/d69fb817054f9f90796915078c9099f3e527d168/ezgif.com-gif-maker.gif)
+![](https://raw.githubusercontent.com/Smueez/assets/main/floating_widget.gif)
 
 
 
@@ -17,36 +17,38 @@
 
 ####  Install
 add this in your pubspec.yaml
-`floating_animated_widget: ^leatest_version`
+`floating_draggable_widget: ^leatest_version`
 
 #### Class
 
 This is the constructor fo the class.
-
-    FloatingWidget({
-		required this.child,
-    	required this.floatingWidget,
-		required this.floatingWidgetWidth,
-    	required this.floatingWidgetHeight,
-    	this.dy,
-    	this.dx,
-    	this.speed
-		});
-
+```
+     FloatingDraggableWidget({
+        required this.child,
+        required this.floatingWidget,
+        required this.floatingWidgetWidth,
+        required this.floatingWidgetHeight,
+        required this.dy,
+        required this.dx,
+        this.speed,
+        this.isDraggble,
+    });
+```
 ### Where:
 
 -   **Child** is required and it accept any **widget**. This is actually the base Widget or the parent widget on where the floating widget will be dragged or moved.
--   **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be modev or dragged around the screen.
+-   **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
 -  **floatingWidgetWidth** is also required and it accepts a **double** value which is the width of the floating widget above mentioned.
 -  **floatingWidgetHeight** is also required and it accepts a **double** value which is the height of the floating widget above mentioned.
--  **dy** accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially .
--  **dx** accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
+-  **dy** is also required and it accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially .
+-  **dx** is also required and it accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
 -  **speed** accepts a **double** value which is the speed factor of the floating widget after it will be let go. The more **speed** will be provided the slower the object will move after the user let the widget go freely.
-
+-  **isDraggble** accepts a **boolean** value which determines if the widget is draggable of not.
 #### Usage　
 
 ```Dart
-
+import 'package:flutter/material.dart';
+import 'package:floating_animated_widget/floating_draggable_widget.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -90,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
 
-    return FloatingWidget(
+    return FloatingDraggableWidget(
       child: Scaffold(
         appBar: AppBar(
 
@@ -120,12 +122,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingWidgetHeight: 40,
       floatingWidgetWidth: 40,
+      dx: 200,
+      dy: 300
     );
   }
 }
 
 ```
 ### Known Limitations
-- Doesn't have functionnality of floating on other apps.
-- It is different than mesenger is such way, you may put the draggable widget anywhere in the screen. it will not gonna align on the left or right of the screen. I did not implemented this feature cause this feature has already been made in other packages.
+- Doesn't have functionality of floating on other apps.
+- It is different than messenger chat head in such a way, you may put the this draggable widget anywhere in the screen. it will not gonna align on the left or right of the screen.
 ### End
