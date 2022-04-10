@@ -1,6 +1,6 @@
 name: floating_draggable_widget
 description: A flutter package for floating draggable widget. By this package a developer can implement a widget which can be draggable inside the screen freely.
-version: 1.2.0
+version: 1.2.1
 homepage: https://github.com/Smueez/floating_animated_widget
 
 environment:

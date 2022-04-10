@@ -47,7 +47,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
   double appBarHeight = AppBar().preferredSize.height;
   /// bool value if it is dragging
   bool isDragging = false;
-  bool _isDraggable = false;
+
   @override
   void initState() {
     top = widget.dy;
@@ -86,7 +86,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
         /// setting the top and left globally
         onPanUpdate: (value){
           setState(() {
-            if(isTabbed && _isDraggable){
+            if(isTabbed){
               top = value.localPosition.dy;
               left = value.localPosition.dx;
             }
@@ -131,7 +131,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
                     /// updating top and left variable
                     onPanUpdate: (value){
                       setState(() {
-                        if(isTabbed && _isDraggable){
+                        if(isTabbed){
                           top = _getDy(value.globalPosition.dy, height);
                           left = _getDx(value.globalPosition.dx, width);
                         }
@@ -140,7 +140,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
                     /// give a sliding animation
                     onPanEnd: (value){
                       setState(() {
-                        if(isTabbed && _isDraggable){
+                        if(isTabbed){
                           isDragging = false;
                           left = _getDx(left + value.velocity.pixelsPerSecond.dx/(widget.speed??50.0).toDouble(), width);
                           top = _getDy(top + value.velocity.pixelsPerSecond.dy/(widget.speed??50.0).toDouble(), height);
@@ -162,11 +162,6 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
     );
   }
 
-
-  @override
-  void didUpdateWidget(oldWidget) {
-    _isDraggable = widget.isDraggable;
-  }
 
   /// get the y axis value or top value with screen size
   double _getDy(double dy, double totalHeight){

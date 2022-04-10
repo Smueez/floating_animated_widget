@@ -132,4 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
 ### Known Limitations
 - Doesn't have functionality of floating on other apps.
 - It is different than messenger chat head in such a way, you may put the this draggable widget anywhere in the screen. it will not gonna align on the left or right of the screen.
+- It dose not automatically calculate the size of the parent widget
+- It dose not automatically calculate the size of the floating widget
 ### End
