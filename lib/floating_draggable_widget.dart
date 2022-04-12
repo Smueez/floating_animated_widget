@@ -10,10 +10,11 @@ class FloatingDraggableWidget extends StatefulWidget {
     required this.floatingWidget,
     required this.floatingWidgetWidth,
     required this.floatingWidgetHeight,
-    required this.dy,
-    required this.dx,
+    this.dy,
+    this.dx,
     this.speed,
-    this.isDraggable = false,
+    this.isDraggable = true,
+    this.autoAlign = false,
     Key? key}) : super(key: key);
 
   /// Child is required and it accept any widget.
@@ -30,36 +31,44 @@ class FloatingDraggableWidget extends StatefulWidget {
   double floatingWidgetWidth;
   double floatingWidgetHeight;
   Widget floatingWidget;
-  double dy;
-  double dx;
+  double? dy;
+  double? dx;
   double? speed;
   bool isDraggable;
+  bool autoAlign;
   @override
   _FloatingDraggableWidgetState createState() => _FloatingDraggableWidgetState();
 }
 
 class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with SingleTickerProviderStateMixin {
   /// distance from top and left initial value
-  double top = 200, left = 200;
+  late double top, left;
+  double? right = 20;
+  double? bottom = 20;
   /// is the widget tabbed bool value
   bool isTabbed = false;
   /// appbar height
   double appBarHeight = AppBar().preferredSize.height;
   /// bool value if it is dragging
-  bool isDragging = false;
+  bool isDragging = true;
+  /// is the floating widget is draggable of not.
+  bool isDragEnable = true;
 
+  /// total screen size width and height
+  late double width;
+  late double height;
   @override
   void initState() {
-    top = widget.dy;
-    left = widget.dx;
+    top = widget.dy??-1;
+    left = widget.dx??-1;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     /// total screen width & height
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     /// distance from top and left from user
     /// top = widget.dy?? MediaQuery.of(context).size.height / 2;
     /// left = widget.dx?? MediaQuery.of(context).size.width / 2;
@@ -86,7 +95,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
         /// setting the top and left globally
         onPanUpdate: (value){
           setState(() {
-            if(isTabbed){
+            if(isTabbed && isDragEnable){
               top = value.localPosition.dy;
               left = value.localPosition.dx;
             }
@@ -100,8 +109,14 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
             children: [
               widget.child,
               AnimatedPositioned(
-                  top: top,
-                  left: left,
+                /// getting top and left distance where the widget will be floating
+                /// if user hasn't provide the dy and dx then the widget will auto matically
+                /// align 20 right and 20 bottom like a FloatingActionButton
+                /// otherwise the bottom and right will be null.
+                  top: top == -1? null : top,
+                  left: left == -1? null: left,
+                  right: widget.dx == null && left == -1 && top == -1? 20 : null,
+                  bottom: widget.dy == null && left == -1 && top == -1? 20 : null,
                   duration: Duration(milliseconds: isDragging? 100: 700), /// setting animation time and animation type
                   /// the widget will bounce when it will touch the main screen border.
                   /// other wise it has just a simple ease animation.
@@ -131,7 +146,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
                     /// updating top and left variable
                     onPanUpdate: (value){
                       setState(() {
-                        if(isTabbed){
+                        if(isTabbed && isDragEnable){
                           top = _getDy(value.globalPosition.dy, height);
                           left = _getDx(value.globalPosition.dx, width);
                         }
@@ -140,12 +155,33 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
                     /// give a sliding animation
                     onPanEnd: (value){
                       setState(() {
-                        if(isTabbed){
+                        if(isTabbed && isDragEnable){
                           isDragging = false;
                           left = _getDx(left + value.velocity.pixelsPerSecond.dx/(widget.speed??50.0).toDouble(), width);
                           top = _getDy(top + value.velocity.pixelsPerSecond.dy/(widget.speed??50.0).toDouble(), height);
                         }
                       });
+                      /// activates only if auto align is set to true
+                      /// the widget will automagically align to left or right of the screen now
+                      /// after the user release the widget
+                      ///  if the widget is on the left screen side then
+                      ///  left = width - widget.floatingWidgetWidth;
+                      ///  if the widget on the right side then
+                      ///  left = 0
+                      if(widget.autoAlign){
+                        if(left >= width / 2){
+                          setState(() {
+                            left = width - widget.floatingWidgetWidth;
+                          });
+
+                        }
+                        else {
+                          setState(() {
+                            left = 0;
+                          });
+
+                        }
+                      }
                     },
                     /// the floating widget with size
                     child: SizedBox(
@@ -163,6 +199,12 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
   }
 
 
+  @override
+  void didUpdateWidget(oldWidget) {
+    isDragEnable = widget.isDraggable;
+
+  }
+
   /// get the y axis value or top value with screen size
   double _getDy(double dy, double totalHeight){
     /// checking if top is higher or less than total screen height (except
@@ -170,16 +212,17 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
     /// top variable will be no more than the screen total height
     double currentTop;
     if(dy >= (totalHeight - widget.floatingWidgetHeight - appBarHeight)){
-      currentTop = (totalHeight - widget.floatingWidgetHeight - appBarHeight);
+      currentTop = (totalHeight - widget.floatingWidgetHeight);
     }
     else {
       if(dy <= 0){
-        currentTop = 51;
+        currentTop = widget.floatingWidgetHeight;
       }
       else {
         currentTop = dy;
       }
     }
+    // print(currentTop);
     return currentTop;
   }
 
@@ -188,18 +231,19 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with 
     /// checking if left is higher or less than total screen width ,
     /// if so, then left will be the lowest width (0.o) of highest point of width of the screen
     /// widget will not go out side of the screen.
-    double currentTop;
+    double currentLeft;
     if(dx >= (totalWidth - widget.floatingWidgetWidth)){
-      currentTop = (totalWidth - widget.floatingWidgetWidth);
+      currentLeft = (totalWidth - widget.floatingWidgetWidth);
     }
     else {
       if(dx <= 0){
-        currentTop = 0;
+        currentLeft = 0;
       }
       else {
-        currentTop = dx;
+        currentLeft = dx;
       }
     }
-    return currentTop;
+
+    return currentLeft;
   }
 }

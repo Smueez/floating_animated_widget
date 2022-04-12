@@ -8,8 +8,19 @@
 
 
 ## Demo
-
+**Without auto align** 
+Initially "autoAlign" is false.
+```
+    autoAlign = false
+```
 ![](https://raw.githubusercontent.com/Smueez/assets/main/floating_widget.gif)
+
+**Auto align activated**
+Add this to your code.
+```
+    autoAlign = true
+```
+![](https://raw.githubusercontent.com/Smueez/assets/main/autoAlign.gif)
 
 
 
@@ -31,7 +42,8 @@ This is the constructor fo the class.
         required this.dy,
         required this.dx,
         this.speed,
-        this.isDraggble,
+        this.isDraggble = true,
+        this.autoAlign = false,
     });
 ```
 ### Where:
@@ -40,10 +52,11 @@ This is the constructor fo the class.
 -   **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
 -  **floatingWidgetWidth** is also required and it accepts a **double** value which is the width of the floating widget above mentioned.
 -  **floatingWidgetHeight** is also required and it accepts a **double** value which is the height of the floating widget above mentioned.
--  **dy** is also required and it accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially .
--  **dx** is also required and it accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
+-  **dy** accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially .
+-  **dx** it accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
 -  **speed** accepts a **double** value which is the speed factor of the floating widget after it will be let go. The more **speed** will be provided the slower the object will move after the user let the widget go freely.
--  **isDraggble** accepts a **boolean** value which determines if the widget is draggable of not.
+-  **isDraggable** accepts a **boolean** value which determines if the widget is draggable of not.
+-  **autoAlign** accepts a **boolean** value which determines if the widget will be auto aligns on the left or right after it is being dragged.
 #### Usage　
 
 ```Dart
@@ -131,7 +144,6 @@ class _MyHomePageState extends State<MyHomePage> {
 ```
 ### Known Limitations
 - Doesn't have functionality of floating on other apps.
-- It is different than messenger chat head in such a way, you may put the this draggable widget anywhere in the screen. it will not gonna align on the left or right of the screen.
-- It dose not automatically calculate the size of the parent widget
+- It dose not automatically calculate the size of the parent widget it always take the whole screen to float around.
 - It dose not automatically calculate the size of the floating widget
 ### End
