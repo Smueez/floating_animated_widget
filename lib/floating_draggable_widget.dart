@@ -29,6 +29,8 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.deleteWidgetWidth = 50,
     this.isCollidingDeleteWidgetHeight = 70,
     this.isCollidingDeleteWidgetWidth = 70,
+    this.deleteWidgetDecoration,
+    this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
   }) : super(key: key);
 
   /// Child is required and it accept any widget.
@@ -48,12 +50,14 @@ class FloatingDraggableWidget extends StatefulWidget {
   /// deleteWidgetAlignment accepts an alignment value which is used to align the delete widget.
   /// deleteWidgetAnimationCurve accepts an animation curve value which is used to animate the delete widget.
   /// deleteWidgetAnimationDuration accepts an animation duration value which is used to animate the delete widget
-  /// hasDeleteWidgetAnimationDuration accepts an animation duration value which is used to animate the delete widget 
+  /// hasDeleteWidgetAnimationDuration accepts an animation duration value which is used to animate the delete widget
   ///     when it is dragging with the delete widget.
   /// deleteWidgetHeight accepts a double value which is used to set the height of the delete widget.
   /// deleteWidgetWidth accepts a double value which is used to set the width of the delete widget.
   /// isCollidingDeleteWidgetHeight accepts a double value which is used to set the height of the delete widget.
   /// isCollidingDeleteWidgetWidth accepts a double value which is used to set the width of the delete widget.
+  /// boxDecoration optionally accepts a box decoration value which is used to set the decoration of the delete widget.
+  /// deleteWidgetPadding optionally accepts a padding value which is used to set the padding of the delete widget.
   final Widget child;
   final double floatingWidgetWidth;
   final double floatingWidgetHeight;
@@ -73,6 +77,8 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double deleteWidgetWidth;
   final double isCollidingDeleteWidgetHeight;
   final double isCollidingDeleteWidgetWidth;
+  final EdgeInsets? deleteWidgetPadding;
+  final BoxDecoration? deleteWidgetDecoration;
 
   @override
   State<FloatingDraggableWidget> createState() =>
@@ -189,7 +195,9 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                         duration: Duration(
                           milliseconds: widget.hasDeleteWidgetAnimationDuration,
                         ),
-                        child: Align(
+                        child: Container(
+                          padding: widget.deleteWidgetPadding,
+                          decoration: widget.deleteWidgetDecoration,
                           alignment: widget.deleteWidgetAlignment,
                           child: AnimatedSize(
                             curve: widget.deleteWidgetAnimationCurve,

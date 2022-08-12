@@ -37,15 +37,24 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingWidgetWidth: 90,
       dx: 200,
       dy: 300,
+      deleteWidgetDecoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.white12, Colors.grey],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [.0, 1],
+        ),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
+      ),
       deleteWidget: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(width: 1, color: Colors.black),
+          border: Border.all(width: 2, color: Colors.black87),
         ),
-        child: const Icon(
-          Icons.close,
-          color: Colors.black,
-        ),
+        child: const Icon(Icons.close, color: Colors.black87),
       ),
       onDeleteWidget: () {
         debugPrint('Widget deleted');
