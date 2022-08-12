@@ -21,6 +21,14 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.onDeleteWidget,
     this.isDraggable = true,
     this.autoAlign = false,
+    this.deleteWidgetAlignment = Alignment.bottomCenter,
+    this.deleteWidgetAnimationDuration = 200,
+    this.hasDeleteWidgetAnimationDuration = 300,
+    this.deleteWidgetAnimationCurve = Curves.easeIn,
+    this.deleteWidgetHeight = 50,
+    this.deleteWidgetWidth = 50,
+    this.isCollidingDeleteWidgetHeight = 70,
+    this.isCollidingDeleteWidgetWidth = 70,
   }) : super(key: key);
 
   /// Child is required and it accept any widget.
@@ -33,6 +41,19 @@ class FloatingDraggableWidget extends StatefulWidget {
   /// dx accepts a double value which is the distance from the left of the screen where floating widget will be positioned initially.
   /// speed accepts a double value which is the speed factor of the floating widget after it will be let go.
   /// The more speed will be provided the slower the object will move after the user let the widget go freely.
+  /// isDraggable accepts a boolean value which is used to make the floating widget draggable or not.
+  /// autoAlign accepts a boolean value which is used to make the floating widget auto align.
+  /// deleteWidget accepts a widget which is used to delete the floating widget.
+  /// onDeleteWidget accepts a function which is used to delete the floating widget.
+  /// deleteWidgetAlignment accepts an alignment value which is used to align the delete widget.
+  /// deleteWidgetAnimationCurve accepts an animation curve value which is used to animate the delete widget.
+  /// deleteWidgetAnimationDuration accepts an animation duration value which is used to animate the delete widget
+  /// hasDeleteWidgetAnimationDuration accepts an animation duration value which is used to animate the delete widget 
+  ///     when it is dragging with the delete widget.
+  /// deleteWidgetHeight accepts a double value which is used to set the height of the delete widget.
+  /// deleteWidgetWidth accepts a double value which is used to set the width of the delete widget.
+  /// isCollidingDeleteWidgetHeight accepts a double value which is used to set the height of the delete widget.
+  /// isCollidingDeleteWidgetWidth accepts a double value which is used to set the width of the delete widget.
   final Widget child;
   final double floatingWidgetWidth;
   final double floatingWidgetHeight;
@@ -44,6 +65,14 @@ class FloatingDraggableWidget extends StatefulWidget {
   final bool autoAlign;
   final Widget? deleteWidget;
   final Function()? onDeleteWidget;
+  final AlignmentGeometry deleteWidgetAlignment;
+  final Curve deleteWidgetAnimationCurve;
+  final int deleteWidgetAnimationDuration;
+  final int hasDeleteWidgetAnimationDuration;
+  final double deleteWidgetHeight;
+  final double deleteWidgetWidth;
+  final double isCollidingDeleteWidgetHeight;
+  final double isCollidingDeleteWidgetWidth;
 
   @override
   State<FloatingDraggableWidget> createState() =>
@@ -157,16 +186,25 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                     if (hasDeleteWidget)
                       AnimatedOpacity(
                         opacity: isDragging ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
+                        duration: Duration(
+                          milliseconds: widget.hasDeleteWidgetAnimationDuration,
+                        ),
                         child: Align(
-                          alignment: Alignment.bottomCenter,
+                          alignment: widget.deleteWidgetAlignment,
                           child: AnimatedSize(
-                            curve: Curves.linear,
-                            duration: const Duration(milliseconds: 100),
+                            curve: widget.deleteWidgetAnimationCurve,
+                            duration: Duration(
+                              milliseconds:
+                                  widget.deleteWidgetAnimationDuration,
+                            ),
                             child: SizedBox(
                               key: containerKey1,
-                              height: isColliding ? 60 : 40,
-                              width: isColliding ? 60 : 40,
+                              height: isColliding
+                                  ? widget.isCollidingDeleteWidgetHeight
+                                  : widget.deleteWidgetWidth,
+                              width: isColliding
+                                  ? widget.isCollidingDeleteWidgetWidth
+                                  : widget.deleteWidgetWidth,
                               child: widget.deleteWidget,
                             ),
                           ),
