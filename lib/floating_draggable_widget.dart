@@ -190,30 +190,37 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                   children: [
                     widget.child,
                     if (hasDeleteWidget)
-                      AnimatedOpacity(
-                        opacity: isDragging ? 1.0 : 0.0,
+                      AnimatedSlide(
                         duration: Duration(
                           milliseconds: widget.hasDeleteWidgetAnimationDuration,
                         ),
-                        child: Container(
-                          padding: widget.deleteWidgetPadding,
-                          decoration: widget.deleteWidgetDecoration,
-                          alignment: widget.deleteWidgetAlignment,
-                          child: AnimatedSize(
-                            curve: widget.deleteWidgetAnimationCurve,
-                            duration: Duration(
-                              milliseconds:
-                                  widget.deleteWidgetAnimationDuration,
-                            ),
-                            child: SizedBox(
-                              key: containerKey1,
-                              height: isColliding
-                                  ? widget.isCollidingDeleteWidgetHeight
-                                  : widget.deleteWidgetWidth,
-                              width: isColliding
-                                  ? widget.isCollidingDeleteWidgetWidth
-                                  : widget.deleteWidgetWidth,
-                              child: widget.deleteWidget,
+                        offset: isDragging ? Offset.zero : const Offset(0, 2),
+                        child: AnimatedOpacity(
+                          opacity: isDragging ? 1.0 : 0.0,
+                          duration: Duration(
+                            milliseconds:
+                                widget.hasDeleteWidgetAnimationDuration,
+                          ),
+                          child: Container(
+                            padding: widget.deleteWidgetPadding,
+                            decoration: widget.deleteWidgetDecoration,
+                            alignment: widget.deleteWidgetAlignment,
+                            child: AnimatedSize(
+                              curve: widget.deleteWidgetAnimationCurve,
+                              duration: Duration(
+                                milliseconds:
+                                    widget.deleteWidgetAnimationDuration,
+                              ),
+                              child: SizedBox(
+                                key: containerKey1,
+                                height: isColliding
+                                    ? widget.isCollidingDeleteWidgetHeight
+                                    : widget.deleteWidgetWidth,
+                                width: isColliding
+                                    ? widget.isCollidingDeleteWidgetWidth
+                                    : widget.deleteWidgetWidth,
+                                child: widget.deleteWidget,
+                              ),
                             ),
                           ),
                         ),
