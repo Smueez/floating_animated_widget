@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
       onDeleteWidget: () {
         debugPrint('Widget deleted');
       },
-      child: Scaffold(
+      mainScreenWidget: Scaffold(
         appBar: AppBar(
           title: const Text('Floating Animated Widget'),
         ),

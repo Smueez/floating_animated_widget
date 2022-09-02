@@ -22,6 +22,12 @@ Add this to your code.
 ```
 ![](https://raw.githubusercontent.com/Smueez/assets/main/autoAlign.gif)
 
+**Deletion of the widget**
+Add this to your code.
+```
+    deleteWidget: Icon(Icons.cancel),
+```
+![](https://github.com/Smueez/assets/blob/11b723fc6e19e4148969d70ef96fce0877196ec5/ezgif-5-0a5c2b8cd0.gif)
 
 
 ### Getting started
@@ -41,22 +47,48 @@ This is the constructor fo the class.
         required this.floatingWidgetHeight,
         required this.dy,
         required this.dx,
+        this.screenHeight,
+        this.screenWidth,
         this.speed,
         this.isDraggble = true,
         this.autoAlign = false,
+        this.deleteWidgetAlignment = Alignment.bottomCenter,
+        this.deleteWidgetAnimationDuration = 200,
+        this.hasDeleteWidgetAnimationDuration = 300,
+        this.deleteWidgetAnimationCurve = Curves.easeIn,
+        this.deleteWidgetHeight = 50,
+        this.deleteWidgetWidth = 50,
+        this.isCollidingDeleteWidgetHeight = 70,
+        this.isCollidingDeleteWidgetWidth = 70,
+        this.deleteWidgetDecoration,
+        this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
     });
 ```
 ### Where:
 
--   **Child** is required and it accept any **widget**. This is actually the base Widget or the parent widget on where the floating widget will be dragged or moved.
--   **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
+-  **Child** is required and it accept any **widget**. This is actually the base Widget or the parent widget on where the floating widget will be dragged or moved.
+-  **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
 -  **floatingWidgetWidth** is also required and it accepts a **double** value which is the width of the floating widget above mentioned.
 -  **floatingWidgetHeight** is also required and it accepts a **double** value which is the height of the floating widget above mentioned.
 -  **dy** accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially .
 -  **dx** it accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
+-  **screenHeight** accepts a **double** value which is the height of the screen initially.
+-  **screenWidth** accepts a **double** value which is the width of the screen initially.
 -  **speed** accepts a **double** value which is the speed factor of the floating widget after it will be let go. The more **speed** will be provided the slower the object will move after the user let the widget go freely.
 -  **isDraggable** accepts a **boolean** value which determines if the widget is draggable of not.
 -  **autoAlign** accepts a **boolean** value which determines if the widget will be auto aligns on the left or right after it is being dragged.
+-  **deleteWidget** accepts a **widget** which is used to delete the floating widget.
+-  **onDeleteWidget** accepts a **function** which is used to delete the floating widget.
+-  **deleteWidgetAlignment** accepts an **alignment** value which is used to align the delete widget.
+-  **deleteWidgetAnimationCurve** accepts an **animation curve** value which is used to animate the delete widget.
+-  **deleteWidgetAnimationDuration** accepts an **animation duration** value which is used to animate the delete widget
+-  **hasDeleteWidgetAnimationDuration** accepts an **animation duration** value which is used to animate the delete widget when it is dragging with the delete widget.
+-  **deleteWidgetHeight** accepts a **double** value which is used to set the height of the delete widget.
+-  **deleteWidgetWidth** accepts a **double** value which is used to set the width of the delete widget.
+-  **isCollidingDeleteWidgetHeight** accepts a **double** value which is used to set the height of the delete widget.
+-  **isCollidingDeleteWidgetWidth** accepts a **double** value which is used to set the width of the delete widget.
+-  **boxDecoration** optionally accepts a box **decoration** value which is used to set the decoration of the delete widget.
+-  **deleteWidgetPadding** optionally accepts a **padding** value which is used to set the padding of the delete widget.
 #### Usage　
 
 ```Dart

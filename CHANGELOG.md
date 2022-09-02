@@ -7,3 +7,8 @@
 - Now user can disable or dispose the draggability of the floating widget widget.
 - User now don't have to provide the initial position (dy and dx) of the floating widget. Now the widget will initially positioned on 20 to bottom and 20 to right initially if user don't want to give the initial position.
 - Can take screen size.
+
+## 2.1.1
+- Deletion of the floating widget.
+- Added total screen size.
+- Changed "child" parameter to "mainScreenWidget" to avoid confusion.

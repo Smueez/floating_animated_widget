@@ -10,12 +10,14 @@ import 'package:flutter/material.dart';
 class FloatingDraggableWidget extends StatefulWidget {
   const FloatingDraggableWidget({
     Key? key,
-    required this.child,
+    required this.mainScreenWidget,
     required this.floatingWidget,
     required this.floatingWidgetWidth,
     required this.floatingWidgetHeight,
     this.dy,
     this.dx,
+    this.screenHeight,
+    this.screenWidth,
     this.speed,
     this.deleteWidget,
     this.onDeleteWidget,
@@ -33,7 +35,7 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
   }) : super(key: key);
 
-  /// Child is required and it accept any widget.
+  /// mainScreenWidget is required and it accept any widget.
   /// This is actually the base Widget or the parent widget on where the floating widget will be dragged or moved.
   /// floatingWidget is also required and it accept any widget.
   /// This is actually the particular widget which will be floated and can be mode or dragged around the screen.
@@ -41,6 +43,8 @@ class FloatingDraggableWidget extends StatefulWidget {
   /// floatingWidgetHeight is also required and it accepts a double value which is the height of the floating widget above mentioned.
   /// dy accepts a double value which is the distance from the top of the screen where floating widget will be positioned initially .
   /// dx accepts a double value which is the distance from the left of the screen where floating widget will be positioned initially.
+  /// screenHeight accepts a double value which is the height of the screen initially.
+  /// screenWidth accepts a double value which is the width of the screen initially.
   /// speed accepts a double value which is the speed factor of the floating widget after it will be let go.
   /// The more speed will be provided the slower the object will move after the user let the widget go freely.
   /// isDraggable accepts a boolean value which is used to make the floating widget draggable or not.
@@ -58,12 +62,14 @@ class FloatingDraggableWidget extends StatefulWidget {
   /// isCollidingDeleteWidgetWidth accepts a double value which is used to set the width of the delete widget.
   /// boxDecoration optionally accepts a box decoration value which is used to set the decoration of the delete widget.
   /// deleteWidgetPadding optionally accepts a padding value which is used to set the padding of the delete widget.
-  final Widget child;
+  final Widget mainScreenWidget;
   final double floatingWidgetWidth;
   final double floatingWidgetHeight;
   final Widget floatingWidget;
   final double? dy;
   final double? dx;
+  final double? screenHeight;
+  final double? screenWidth;
   final double? speed;
   final bool isDraggable;
   final bool autoAlign;
@@ -139,8 +145,8 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
   @override
   Widget build(BuildContext context) {
     /// total screen width & height
-    width = MediaQuery.of(context).size.width;
-    height = MediaQuery.of(context).size.height;
+    width = widget.screenWidth ?? MediaQuery.of(context).size.width;
+    height = widget.screenHeight ?? MediaQuery.of(context).size.height;
     final hasDeleteWidget = widget.deleteWidget != null;
     final containerKey1 = GlobalKey();
     final containerKey2 = GlobalKey();
@@ -172,23 +178,15 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
         },
 
         /// setting the top and left globally
-        onPanUpdate: (value) {
-          setState(() {
-            if (isTabbed && isDragEnable) {
-              top = value.localPosition.dy;
-              left = value.localPosition.dx;
-            }
-          });
-        },
 
         child: SizedBox(
           height: height,
           width: width,
           child: isRemoved
-              ? widget.child
+              ? widget.mainScreenWidget
               : Stack(
                   children: [
-                    widget.child,
+                    widget.mainScreenWidget,
                     if (hasDeleteWidget)
                       AnimatedSlide(
                         duration: Duration(
@@ -243,10 +241,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                       /// setting animation time and animation type
                       /// the widget will bounce when it will touch the main screen border.
                       /// other wise it has just a simple ease animation.
-                      curve: top >=
-                                  (height -
-                                      widget.floatingWidgetHeight -
-                                      appBarHeight) ||
+                      curve: top >= (height - widget.floatingWidgetHeight) ||
                               left >= (width - widget.floatingWidgetWidth) ||
                               top <= widget.floatingWidgetHeight ||
                               left <= 1
@@ -282,7 +277,10 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                             if (isTabbed && isDragEnable) {
                               isColliding = hasDeleteWidget &&
                                   hasCollision(containerKey1, containerKey2);
-                              top = _getDy(value.globalPosition.dy, height);
+                              top = _getDy(
+                                  value.globalPosition.dy -
+                                      (widget.floatingWidgetHeight),
+                                  height);
                               left = _getDx(value.globalPosition.dx, width);
                             }
                           });
@@ -358,16 +356,17 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
     /// appbar), if so, then top will be the lowest of highest point of the screen.
     /// top variable will be no more than the screen total height
     double currentTop;
-    if (dy >= (totalHeight - widget.floatingWidgetHeight - appBarHeight)) {
+    if (dy >= (totalHeight - widget.floatingWidgetHeight)) {
       currentTop = (totalHeight - widget.floatingWidgetHeight);
     } else {
       if (dy <= 0) {
         currentTop = widget.floatingWidgetHeight;
       } else {
+
         currentTop = dy;
       }
     }
-    // print(currentTop);
+
     return currentTop;
   }
 
