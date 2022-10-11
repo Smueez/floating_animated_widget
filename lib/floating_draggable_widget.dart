@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Does not affect the functionality or performance of the particular widget;
 /// Used physics law supported animation to make it more attractive;
 class FloatingDraggableWidget extends StatefulWidget {
-  const FloatingDraggableWidget({
+  FloatingDraggableWidget({
     Key? key,
     required this.mainScreenWidget,
     required this.floatingWidget,
@@ -33,6 +33,7 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.isCollidingDeleteWidgetWidth = 70,
     this.deleteWidgetDecoration,
     this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
+    this.resizeToAvoidBottomInsetBool = true,
   }) : super(key: key);
 
   /// mainScreenWidget is required and it accept any widget.
@@ -85,6 +86,8 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double isCollidingDeleteWidgetWidth;
   final EdgeInsets? deleteWidgetPadding;
   final BoxDecoration? deleteWidgetDecoration;
+  /// If the user need disable the resizeToAvoidBottomInset from Scaffold.
+  bool resizeToAvoidBottomInsetBool;
 
   @override
   State<FloatingDraggableWidget> createState() =>
@@ -119,7 +122,6 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
   /// If the user requested to remove the floating widget.
   bool isRemoved = false;
-
   bool hasCollision(GlobalKey<State<StatefulWidget>> key1,
       GlobalKey<State<StatefulWidget>> key2) {
     final box1 = key1.currentContext?.findRenderObject() as RenderBox?;
@@ -155,7 +157,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
     /// top = widget.dy?? MediaQuery.of(context).size.height / 2;
     /// left = widget.dx?? MediaQuery.of(context).size.width / 2;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: widget.resizeToAvoidBottomInsetBool,
       body: GestureDetector(
         /// if the user touched out side of the widget the tabbed will be false
         onTap: () {
@@ -363,7 +365,6 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
       if (dy <= 0) {
         currentTop = widget.floatingWidgetHeight;
       } else {
-
         currentTop = dy;
       }
     }
