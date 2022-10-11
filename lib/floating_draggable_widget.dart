@@ -155,6 +155,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
     /// top = widget.dy?? MediaQuery.of(context).size.height / 2;
     /// left = widget.dx?? MediaQuery.of(context).size.width / 2;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         /// if the user touched out side of the widget the tabbed will be false
         onTap: () {
