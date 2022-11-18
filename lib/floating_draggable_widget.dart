@@ -21,6 +21,7 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.speed,
     this.deleteWidget,
     this.onDeleteWidget,
+    this.bottom,
     this.isDraggable = true,
     this.autoAlign = false,
     this.deleteWidgetAlignment = Alignment.bottomCenter,
@@ -69,6 +70,7 @@ class FloatingDraggableWidget extends StatefulWidget {
   final Widget floatingWidget;
   final double? dy;
   final double? dx;
+  final double? bottom;
   final double? screenHeight;
   final double? screenWidth;
   final double? speed;
@@ -86,6 +88,7 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double isCollidingDeleteWidgetWidth;
   final EdgeInsets? deleteWidgetPadding;
   final BoxDecoration? deleteWidgetDecoration;
+
   /// If the user need disable the resizeToAvoidBottomInset from Scaffold.
   bool resizeToAvoidBottomInset;
 
@@ -236,9 +239,10 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                       right: widget.dx == null && left == -1 && top == -1
                           ? 20
                           : null,
-                      bottom: widget.dy == null && left == -1 && top == -1
-                          ? 20
-                          : null,
+                      bottom: widget.bottom ??
+                          (widget.dy == null && left == -1 && top == -1
+                              ? 20
+                              : null),
                       duration: Duration(milliseconds: isDragging ? 100 : 700),
 
                       /// setting animation time and animation type
