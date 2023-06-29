@@ -35,6 +35,8 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.deleteWidgetDecoration,
     this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
     this.resizeToAvoidBottomInset = true,
+    this.onDragging,
+    this.widgetWhenDragging,
   }) : super(key: key);
 
   /// mainScreenWidget is required and it accept any widget.
@@ -88,6 +90,12 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double isCollidingDeleteWidgetWidth;
   final EdgeInsets? deleteWidgetPadding;
   final BoxDecoration? deleteWidgetDecoration;
+
+  /// onDragging optionally accepts a function which is used to notify the user when the widget is dragging.
+  final Function(bool)? onDragging;
+
+  /// widgetWhenDragging optionally accepts a widget which is used to show when the widget is dragging.
+  final Widget? widgetWhenDragging;
 
   /// If the user need disable the resizeToAvoidBottomInset from Scaffold.
   bool resizeToAvoidBottomInset;
@@ -178,6 +186,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
         /// if the user touch of even gesture detector detect any drag gesture out side of the widget the dragging will be false
         onPanStart: (value) {
+          widget.onDragging?.call(true);
           setState(() {
             isTabbed = false;
           });
@@ -295,6 +304,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
                         /// give a sliding animation
                         onPanEnd: (value) {
+                          widget.onDragging?.call(false);
                           setState(() {
                             if (isTabbed && isDragEnable) {
                               isDragging = false;
@@ -336,12 +346,14 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                         },
 
                         /// the floating widget with size
-                        child: SizedBox(
-                          key: containerKey2,
-                          width: widget.floatingWidgetWidth,
-                          height: widget.floatingWidgetHeight,
-                          child: widget.floatingWidget,
-                        ),
+                        child: isDragging && widget.widgetWhenDragging != null
+                            ? widget.widgetWhenDragging
+                            : SizedBox(
+                                key: containerKey2,
+                                width: widget.floatingWidgetWidth,
+                                height: widget.floatingWidgetHeight,
+                                child: widget.floatingWidget,
+                              ),
                       ),
                     ),
                   ],
