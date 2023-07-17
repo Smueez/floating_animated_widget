@@ -347,7 +347,10 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
                         /// the floating widget with size
                         child: isDragging && widget.widgetWhenDragging != null
-                            ? widget.widgetWhenDragging
+                            ? SizedBox(
+                                key: containerKey2,
+                                child: widget.widgetWhenDragging,
+                              )
                             : SizedBox(
                                 key: containerKey2,
                                 width: widget.floatingWidgetWidth,
