@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Does not affect the functionality or performance of the particular widget;
 /// Used physics law supported animation to make it more attractive;
 class FloatingDraggableWidget extends StatefulWidget {
-  const FloatingDraggableWidget({
+  FloatingDraggableWidget({
     Key? key,
     required this.mainScreenWidget,
     required this.floatingWidget,
@@ -21,6 +21,7 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.speed,
     this.deleteWidget,
     this.onDeleteWidget,
+    this.bottom,
     this.isDraggable = true,
     this.autoAlign = false,
     this.deleteWidgetAlignment = Alignment.bottomCenter,
@@ -33,6 +34,9 @@ class FloatingDraggableWidget extends StatefulWidget {
     this.isCollidingDeleteWidgetWidth = 70,
     this.deleteWidgetDecoration,
     this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
+    this.resizeToAvoidBottomInset = true,
+    this.onDragging,
+    this.widgetWhenDragging,
   }) : super(key: key);
 
   /// mainScreenWidget is required and it accept any widget.
@@ -68,6 +72,7 @@ class FloatingDraggableWidget extends StatefulWidget {
   final Widget floatingWidget;
   final double? dy;
   final double? dx;
+  final double? bottom;
   final double? screenHeight;
   final double? screenWidth;
   final double? speed;
@@ -85,6 +90,15 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double isCollidingDeleteWidgetWidth;
   final EdgeInsets? deleteWidgetPadding;
   final BoxDecoration? deleteWidgetDecoration;
+
+  /// onDragging optionally accepts a function which is used to notify the user when the widget is dragging.
+  final Function(bool)? onDragging;
+
+  /// widgetWhenDragging optionally accepts a widget which is used to show when the widget is dragging.
+  final Widget? widgetWhenDragging;
+
+  /// If the user need disable the resizeToAvoidBottomInset from Scaffold.
+  bool resizeToAvoidBottomInset;
 
   @override
   State<FloatingDraggableWidget> createState() =>
@@ -119,7 +133,6 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
   /// If the user requested to remove the floating widget.
   bool isRemoved = false;
-
   bool hasCollision(GlobalKey<State<StatefulWidget>> key1,
       GlobalKey<State<StatefulWidget>> key2) {
     final box1 = key1.currentContext?.findRenderObject() as RenderBox?;
@@ -155,6 +168,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
     /// top = widget.dy?? MediaQuery.of(context).size.height / 2;
     /// left = widget.dx?? MediaQuery.of(context).size.width / 2;
     return Scaffold(
+      resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
       body: GestureDetector(
         /// if the user touched out side of the widget the tabbed will be false
         onTap: () {
@@ -172,6 +186,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
         /// if the user touch of even gesture detector detect any drag gesture out side of the widget the dragging will be false
         onPanStart: (value) {
+          widget.onDragging?.call(true);
           setState(() {
             isTabbed = false;
           });
@@ -233,9 +248,10 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                       right: widget.dx == null && left == -1 && top == -1
                           ? 20
                           : null,
-                      bottom: widget.dy == null && left == -1 && top == -1
-                          ? 20
-                          : null,
+                      bottom: widget.bottom ??
+                          (widget.dy == null && left == -1 && top == -1
+                              ? 20
+                              : null),
                       duration: Duration(milliseconds: isDragging ? 100 : 700),
 
                       /// setting animation time and animation type
@@ -288,6 +304,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
 
                         /// give a sliding animation
                         onPanEnd: (value) {
+                          widget.onDragging?.call(false);
                           setState(() {
                             if (isTabbed && isDragEnable) {
                               isDragging = false;
@@ -329,12 +346,17 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                         },
 
                         /// the floating widget with size
-                        child: SizedBox(
-                          key: containerKey2,
-                          width: widget.floatingWidgetWidth,
-                          height: widget.floatingWidgetHeight,
-                          child: widget.floatingWidget,
-                        ),
+                        child: isDragging && widget.widgetWhenDragging != null
+                            ? SizedBox(
+                                key: containerKey2,
+                                child: widget.widgetWhenDragging,
+                              )
+                            : SizedBox(
+                                key: containerKey2,
+                                width: widget.floatingWidgetWidth,
+                                height: widget.floatingWidgetHeight,
+                                child: widget.floatingWidget,
+                              ),
                       ),
                     ),
                   ],
@@ -362,7 +384,6 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
       if (dy <= 0) {
         currentTop = widget.floatingWidgetHeight;
       } else {
-
         currentTop = dy;
       }
     }
