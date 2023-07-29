@@ -4,7 +4,7 @@
 - This package is used to make a widget movable or draggable around the screen freely;
 - Works fine for any Widget;
 - Does not affect the functionality or performance of the particular widget;
-- Used physics law-supported animation to make it more attractive;
+- Used physics law supported animation to make it more attractive;
 
 
 ## Demo
