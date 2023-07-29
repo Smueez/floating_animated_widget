@@ -15,3 +15,7 @@
 
 ## 2.1.3
 - bottom inset resize issue fixed
+
+
+## 2.1.4
+- Typo
