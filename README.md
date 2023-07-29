@@ -34,11 +34,11 @@ Add this to your code.
 
 ####  Install
 add this in your pubspec.yaml
-`floating_draggable_widget: ^leatest_version`
+`floating_draggable_widget: ^latest_version`
 
 #### Class
 
-This is the constructor fo the class.
+This is the constructor of the class.
 ```
      FloatingDraggableWidget({
         required this.child,
@@ -70,12 +70,12 @@ This is the constructor fo the class.
 -  **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
 -  **floatingWidgetWidth** is also required and it accepts a **double** value which is the width of the floating widget above mentioned.
 -  **floatingWidgetHeight** is also required and it accepts a **double** value which is the height of the floating widget above mentioned.
--  **dy** accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially .
--  **dx** it accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
+-  **dy** accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially.
+-  **dx** accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
 -  **screenHeight** accepts a **double** value which is the height of the screen initially.
 -  **screenWidth** accepts a **double** value which is the width of the screen initially.
 -  **speed** accepts a **double** value which is the speed factor of the floating widget after it will be let go. The more **speed** will be provided the slower the object will move after the user let the widget go freely.
--  **isDraggable** accepts a **boolean** value which determines if the widget is draggable of not.
+-  **isDraggable** accepts a **boolean** value which determines if the widget is draggable or not.
 -  **autoAlign** accepts a **boolean** value which determines if the widget will be auto aligns on the left or right after it is being dragged.
 -  **deleteWidget** accepts a **widget** which is used to delete the floating widget.
 -  **onDeleteWidget** accepts a **function** which is used to delete the floating widget.
@@ -176,6 +176,6 @@ class _MyHomePageState extends State<MyHomePage> {
 ```
 ### Known Limitations
 - Doesn't have functionality of floating on other apps.
-- It dose not automatically calculate the size of the parent widget it always take the whole screen to float around.
-- It dose not automatically calculate the size of the floating widget
+- It does not automatically calculate the size of the parent widget it always takes the whole screen to float around.
+- It does not automatically calculate the size of the floating widget
 ### End
