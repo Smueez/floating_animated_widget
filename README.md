@@ -41,12 +41,12 @@ add this in your pubspec.yaml
 This is the constructor of the class.
 ```
      FloatingDraggableWidget({
-        required this.child,
+        required this.mainScreenWidget,
         required this.floatingWidget,
         required this.floatingWidgetWidth,
         required this.floatingWidgetHeight,
-        required this.dy,
-        required this.dx,
+        this.dy,
+        this.dx,
         this.screenHeight,
         this.screenWidth,
         this.speed,
@@ -62,11 +62,13 @@ This is the constructor of the class.
         this.isCollidingDeleteWidgetWidth = 70,
         this.deleteWidgetDecoration,
         this.deleteWidgetPadding = const EdgeInsets.only(bottom: 8),
+        this.onDragging,
+        this.widgetWhenDragging,
     });
 ```
 ### Where:
 
--  **Child** is required and it accept any **widget**. This is actually the base Widget or the parent widget on where the floating widget will be dragged or moved.
+-  **mainScreenWidget** is required and it accept any **widget**. This is actually the base Widget or the parent widget on where the floating widget will be dragged or moved.
 -  **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
 -  **floatingWidgetWidth** is also required and it accepts a **double** value which is the width of the floating widget above mentioned.
 -  **floatingWidgetHeight** is also required and it accepts a **double** value which is the height of the floating widget above mentioned.
