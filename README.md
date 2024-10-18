@@ -72,6 +72,9 @@ This is the constructor of the class.
 -  **floatingWidget** is also required and it accept any **widget**. This is actually the particular widget which will be floated and can be mode or dragged around the screen.
 -  **floatingWidgetWidth** is also required and it accepts a **double** value which is the width of the floating widget above mentioned.
 -  **floatingWidgetHeight** is also required and it accepts a **double** value which is the height of the floating widget above mentioned.
+- **onDragEvent** is a function is not required, which is a event listener of the current position of floating widget, which provides only the x axis as dx and y axis as xy.
+-  **autoAlignType** is a enum type. which has 3 type. **onlyRight**, **onlyLeft**, **both**. by default it is **both**. if **autoAlign** is true then this determines the on which side the floating widget will land after dragging ends.
+-  **disableBounceAnimation** is a bool type. if **autoAlign** is true then then setting true to **disableBounceAnimation** can disable the bounce animation.
 -  **dy** accepts a **double** value which is the distance from the top of the screen where floating widget will be positioned initially.
 -  **dx** accepts a **double** value which is the distance from the left of the screen where floating widget will be positioned initially.
 -  **screenHeight** accepts a **double** value which is the height of the screen initially.

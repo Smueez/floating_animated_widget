@@ -33,6 +33,15 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () {},
         child: const Icon(Icons.add, size: 50),
       ),
+      onDragEvent: (dx, dy){
+        print("$dx, $dy");
+      },
+      onDragging: (val){
+        print("on dragging $val");
+      },
+      autoAlign: true,
+      disableBounceAnimation: true,
+      // autoAlignType: AlignmentType.both,
       floatingWidgetHeight: 90,
       floatingWidgetWidth: 90,
       dx: 200,
@@ -63,13 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Floating Animated Widget'),
         ),
-        body: Center(
+        body: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
                 'Floating Animated Widget',
-                style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),

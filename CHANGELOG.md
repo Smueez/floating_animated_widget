@@ -19,6 +19,10 @@
 ## 2.1.5
 - Changes of readme
 
+## 2.2.0
+- OnDragEvent added
+- AutoAlignmentType  added
+- Issue fix
 
-## 2.1.4
-- Typo
+## 2.3.0
+- disableBounceAnimation added

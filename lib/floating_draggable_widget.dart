@@ -1,7 +1,7 @@
 library floating_draggable_widget;
 
 import 'package:flutter/material.dart';
-
+enum AlignmentType {onlyRight, onlyLeft, both}
 /// Support Android, IOS, Web etc.
 /// This package is used to make a widget movable or draggable around the screen freely;
 /// Works fine for any Widget;
@@ -14,6 +14,9 @@ class FloatingDraggableWidget extends StatefulWidget {
     required this.floatingWidget,
     required this.floatingWidgetWidth,
     required this.floatingWidgetHeight,
+    this.onDragEvent,
+    this.autoAlignType = AlignmentType.both,
+    this.disableBounceAnimation = false,
     this.dy,
     this.dx,
     this.screenHeight,
@@ -90,6 +93,15 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double isCollidingDeleteWidgetWidth;
   final EdgeInsets? deleteWidgetPadding;
   final BoxDecoration? deleteWidgetDecoration;
+  /// if [autoAlign] is true then this autoAlignType will determine on which side the floating widget land after releasing it.
+  /// by default it is [AlignmentType.both].
+  final AlignmentType autoAlignType;
+
+  /// if [autoAlign] is true, then setting true to [disableBounceAnimation] can disable the bounce animation.
+  final bool disableBounceAnimation;
+
+  /// onDragEvent calls when floating widget is being dragged. (dx, dy) is the actual position of the screen
+  Function(double dx, double dy)? onDragEvent;
 
   /// onDragging optionally accepts a function which is used to notify the user when the widget is dragging.
   final Function(bool)? onDragging;
@@ -261,7 +273,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                               left >= (width - widget.floatingWidgetWidth) ||
                               top <= widget.floatingWidgetHeight ||
                               left <= 1
-                          ? Curves.bounceOut
+                          ? !widget.disableBounceAnimation? Curves.bounceOut : Curves.ease
                           : Curves.ease,
                       child: GestureDetector(
                         /// tabbing on widget makes the isTabbed true.
@@ -284,6 +296,9 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                           setState(() {
                             isTabbed = true;
                             isDragging = true;
+                            if(widget.onDragging != null){
+                              widget.onDragging!(true);
+                            }
                           });
                         },
 
@@ -298,6 +313,9 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                                       (widget.floatingWidgetHeight),
                                   height);
                               left = _getDx(value.globalPosition.dx, width);
+                              if(widget.onDragEvent != null){
+                                widget.onDragEvent!(left, top);
+                              }
                             }
                           });
                         },
@@ -318,6 +336,10 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                                       value.velocity.pixelsPerSecond.dy /
                                           (widget.speed ?? 50.0).toDouble(),
                                   height);
+                              if(widget.onDragEvent != null){
+                                widget.onDragEvent!(left, top);
+                              }
+
                             }
                             if (hasDeleteWidget && isColliding) {
                               isRemoved = true;
@@ -333,14 +355,30 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                           ///  if the widget on the right side then
                           ///  left = 0
                           if (widget.autoAlign) {
-                            if (left >= width / 2) {
-                              setState(() {
-                                left = width - widget.floatingWidgetWidth;
-                              });
-                            } else {
+                            /// widget aligns on the left only
+                            if(widget.autoAlignType == AlignmentType.onlyLeft){
                               setState(() {
                                 left = 0;
                               });
+                            }
+                            /// widget aligns on the right only
+                            else if(widget.autoAlignType == AlignmentType.onlyRight){
+                              setState(() {
+                                left = width - widget.floatingWidgetWidth;
+                              });
+                            }
+                            /// widget aligns on the both side according to the position
+                            /// default behaviour
+                            else{
+                              if (left >= width / 2) {
+                                setState(() {
+                                  left = width - widget.floatingWidgetWidth;
+                                });
+                              } else {
+                                setState(() {
+                                  left = 0;
+                                });
+                              }
                             }
                           }
                         },
