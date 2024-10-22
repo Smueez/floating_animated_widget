@@ -1,3 +1,4 @@
+import 'package:floating_draggable_widget/floating_widget_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:floating_draggable_widget/floating_draggable_widget.dart';
@@ -26,17 +27,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  ///floating widget visibility initially set to false
+  final FloatingWidgetController floatingWidgetController = FloatingWidgetController(false);
+
   @override
   Widget build(BuildContext context) {
     return FloatingDraggableWidget(
+      controller: floatingWidgetController,
       floatingWidget: FloatingActionButton(
         onPressed: () {},
         child: const Icon(Icons.add, size: 50),
       ),
-      onDragEvent: (dx, dy){
+      onDragEvent: (dx, dy) {
         print("$dx, $dy");
       },
-      onDragging: (val){
+      onDragging: (val) {
         print("on dragging $val");
       },
       autoAlign: true,
@@ -72,13 +77,37 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Floating Animated Widget'),
         ),
-        body: const Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
+              const Text(
                 'Floating Animated Widget',
               ),
+              ElevatedButton(
+                  onPressed: () {
+                    //example to show the floating widget
+                    setState(() {
+                      floatingWidgetController.show();
+                    });
+                  },
+                  child: const Text("Show")),
+              ElevatedButton(
+                  onPressed: () {
+                    //example to hide the floating widget
+                    setState(() {
+                      floatingWidgetController.hide();
+                    });
+                  },
+                  child: const Text("Show")),
+              ElevatedButton(
+                  onPressed: () {
+                    //example to toggle the floating widget state
+                    setState(() {
+                      floatingWidgetController.toggle();
+                    });
+                  },
+                  child: const Text("Toggle"))
             ],
           ),
         ),

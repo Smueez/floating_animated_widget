@@ -1,7 +1,11 @@
 library floating_draggable_widget;
 
 import 'package:flutter/material.dart';
-enum AlignmentType {onlyRight, onlyLeft, both}
+
+import 'floating_widget_controller.dart';
+
+enum AlignmentType { onlyRight, onlyLeft, both }
+
 /// Support Android, IOS, Web etc.
 /// This package is used to make a widget movable or draggable around the screen freely;
 /// Works fine for any Widget;
@@ -10,6 +14,7 @@ enum AlignmentType {onlyRight, onlyLeft, both}
 class FloatingDraggableWidget extends StatefulWidget {
   FloatingDraggableWidget({
     Key? key,
+    required this.controller,
     required this.mainScreenWidget,
     required this.floatingWidget,
     required this.floatingWidgetWidth,
@@ -93,6 +98,7 @@ class FloatingDraggableWidget extends StatefulWidget {
   final double isCollidingDeleteWidgetWidth;
   final EdgeInsets? deleteWidgetPadding;
   final BoxDecoration? deleteWidgetDecoration;
+
   /// if [autoAlign] is true then this autoAlignType will determine on which side the floating widget land after releasing it.
   /// by default it is [AlignmentType.both].
   final AlignmentType autoAlignType;
@@ -112,13 +118,15 @@ class FloatingDraggableWidget extends StatefulWidget {
   /// If the user need disable the resizeToAvoidBottomInset from Scaffold.
   bool resizeToAvoidBottomInset;
 
+  ///controller to handle the floating widget state from outside of this package's scope
+  ///useful to re-insert the widget after deleting it, or managing it's state remotely basically.
+  final FloatingWidgetController controller;
+
   @override
-  State<FloatingDraggableWidget> createState() =>
-      _FloatingDraggableWidgetState();
+  State<FloatingDraggableWidget> createState() => _FloatingDraggableWidgetState();
 }
 
-class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
-    with SingleTickerProviderStateMixin {
+class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget> with SingleTickerProviderStateMixin {
   /// distance from top and left initial value
   late double top, left;
   double? right = 20;
@@ -143,10 +151,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
   /// is the floating widget colliding with the close widget.
   bool isColliding = true;
 
-  /// If the user requested to remove the floating widget.
-  bool isRemoved = false;
-  bool hasCollision(GlobalKey<State<StatefulWidget>> key1,
-      GlobalKey<State<StatefulWidget>> key2) {
+  bool hasCollision(GlobalKey<State<StatefulWidget>> key1, GlobalKey<State<StatefulWidget>> key2) {
     final box1 = key1.currentContext?.findRenderObject() as RenderBox?;
     final box2 = key2.currentContext?.findRenderObject() as RenderBox?;
     if (box1 != null && box2 != null) {
@@ -209,7 +214,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
         child: SizedBox(
           height: height,
           width: width,
-          child: isRemoved
+          child: !widget.controller.value
               ? widget.mainScreenWidget
               : Stack(
                   children: [
@@ -223,8 +228,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                         child: AnimatedOpacity(
                           opacity: isDragging ? 1.0 : 0.0,
                           duration: Duration(
-                            milliseconds:
-                                widget.hasDeleteWidgetAnimationDuration,
+                            milliseconds: widget.hasDeleteWidgetAnimationDuration,
                           ),
                           child: Container(
                             padding: widget.deleteWidgetPadding,
@@ -233,17 +237,12 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                             child: AnimatedSize(
                               curve: widget.deleteWidgetAnimationCurve,
                               duration: Duration(
-                                milliseconds:
-                                    widget.deleteWidgetAnimationDuration,
+                                milliseconds: widget.deleteWidgetAnimationDuration,
                               ),
                               child: SizedBox(
                                 key: containerKey1,
-                                height: isColliding
-                                    ? widget.isCollidingDeleteWidgetHeight
-                                    : widget.deleteWidgetWidth,
-                                width: isColliding
-                                    ? widget.isCollidingDeleteWidgetWidth
-                                    : widget.deleteWidgetWidth,
+                                height: isColliding ? widget.isCollidingDeleteWidgetHeight : widget.deleteWidgetWidth,
+                                width: isColliding ? widget.isCollidingDeleteWidgetWidth : widget.deleteWidgetWidth,
                                 child: widget.deleteWidget,
                               ),
                             ),
@@ -257,13 +256,8 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                       /// otherwise the bottom and right will be null.
                       top: top == -1 ? null : top,
                       left: left == -1 ? null : left,
-                      right: widget.dx == null && left == -1 && top == -1
-                          ? 20
-                          : null,
-                      bottom: widget.bottom ??
-                          (widget.dy == null && left == -1 && top == -1
-                              ? 20
-                              : null),
+                      right: widget.dx == null && left == -1 && top == -1 ? 20 : null,
+                      bottom: widget.bottom ?? (widget.dy == null && left == -1 && top == -1 ? 20 : null),
                       duration: Duration(milliseconds: isDragging ? 100 : 700),
 
                       /// setting animation time and animation type
@@ -273,7 +267,9 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                               left >= (width - widget.floatingWidgetWidth) ||
                               top <= widget.floatingWidgetHeight ||
                               left <= 1
-                          ? !widget.disableBounceAnimation? Curves.bounceOut : Curves.ease
+                          ? !widget.disableBounceAnimation
+                              ? Curves.bounceOut
+                              : Curves.ease
                           : Curves.ease,
                       child: GestureDetector(
                         /// tabbing on widget makes the isTabbed true.
@@ -296,7 +292,7 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                           setState(() {
                             isTabbed = true;
                             isDragging = true;
-                            if(widget.onDragging != null){
+                            if (widget.onDragging != null) {
                               widget.onDragging!(true);
                             }
                           });
@@ -306,14 +302,10 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                         onPanUpdate: (value) {
                           setState(() {
                             if (isTabbed && isDragEnable) {
-                              isColliding = hasDeleteWidget &&
-                                  hasCollision(containerKey1, containerKey2);
-                              top = _getDy(
-                                  value.globalPosition.dy -
-                                      (widget.floatingWidgetHeight),
-                                  height);
+                              isColliding = hasDeleteWidget && hasCollision(containerKey1, containerKey2);
+                              top = _getDy(value.globalPosition.dy - (widget.floatingWidgetHeight), height);
                               left = _getDx(value.globalPosition.dx, width);
-                              if(widget.onDragEvent != null){
+                              if (widget.onDragEvent != null) {
                                 widget.onDragEvent!(left, top);
                               }
                             }
@@ -327,22 +319,15 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                             if (isTabbed && isDragEnable) {
                               isDragging = false;
                               left = _getDx(
-                                  left +
-                                      value.velocity.pixelsPerSecond.dx /
-                                          (widget.speed ?? 50.0).toDouble(),
-                                  width);
+                                  left + value.velocity.pixelsPerSecond.dx / (widget.speed ?? 50.0).toDouble(), width);
                               top = _getDy(
-                                  top +
-                                      value.velocity.pixelsPerSecond.dy /
-                                          (widget.speed ?? 50.0).toDouble(),
-                                  height);
-                              if(widget.onDragEvent != null){
+                                  top + value.velocity.pixelsPerSecond.dy / (widget.speed ?? 50.0).toDouble(), height);
+                              if (widget.onDragEvent != null) {
                                 widget.onDragEvent!(left, top);
                               }
-
                             }
                             if (hasDeleteWidget && isColliding) {
-                              isRemoved = true;
+                              widget.controller.hide();
                               widget.onDeleteWidget?.call();
                             }
                           });
@@ -356,20 +341,22 @@ class _FloatingDraggableWidgetState extends State<FloatingDraggableWidget>
                           ///  left = 0
                           if (widget.autoAlign) {
                             /// widget aligns on the left only
-                            if(widget.autoAlignType == AlignmentType.onlyLeft){
+                            if (widget.autoAlignType == AlignmentType.onlyLeft) {
                               setState(() {
                                 left = 0;
                               });
                             }
+
                             /// widget aligns on the right only
-                            else if(widget.autoAlignType == AlignmentType.onlyRight){
+                            else if (widget.autoAlignType == AlignmentType.onlyRight) {
                               setState(() {
                                 left = width - widget.floatingWidgetWidth;
                               });
                             }
+
                             /// widget aligns on the both side according to the position
                             /// default behaviour
-                            else{
+                            else {
                               if (left >= width / 2) {
                                 setState(() {
                                   left = width - widget.floatingWidgetWidth;
